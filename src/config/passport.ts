@@ -1,7 +1,8 @@
+import { PassportStatic } from 'passport'
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt'
 import { User } from '../models/User'
 
-module.exports = (passport: any) => {
+module.exports = (passport: PassportStatic) => {
   passport.use(
     new JwtStrategy(
       {

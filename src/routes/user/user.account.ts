@@ -5,8 +5,9 @@ import { User } from '../../models/User'
 import { LoginSchema, SignupSchema } from '../../schema/user.schema'
 import genToken from '../../utils/genToken'
 import validate from '../../utils/validator'
-export default (app: Application, passport: any) => {
-  app.post('/api/user/create', async (req, res) => {
+
+export default (app: Application) => {
+  app.post('/api/user/signup', async (req, res) => {
     const { username, email, password } = clean(req.body)
 
     const { values, error } = validate(SignupSchema, {
@@ -21,7 +22,7 @@ export default (app: Application, passport: any) => {
 
     const doesUserAlreadyExist = await User.findOne({ email: values.email })
     if (doesUserAlreadyExist) {
-      return res.status(400).send({ message: 'User already exists!' })
+      return res.status(403).send({ message: 'User already exists!' })
     }
 
     const user = new User(values)
@@ -51,13 +52,6 @@ export default (app: Application, passport: any) => {
     if (!user) {
       return res.status(400).send({ message: 'Invalid credentials!' })
     }
-
-    // if (!isMatch) {
-    //   return res.status(400).send({
-    //     success: false,
-    //     message: 'Invalid credentials!'
-    //   })
-    // }
 
     const payload = { id: user.id, email: user.email }
     const token = genToken(payload)
